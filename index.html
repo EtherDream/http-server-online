@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <title>HTTP Server</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <style>
+    #btnOpenDir {
+      width: 400px;
+      height: 100px;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    #txtErr {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <button id="btnOpenDir" disabled>Select Web Directory</button>
+  <div id="txtErr"></div>
+  <div id="divCmd" hidden>
+    <div>Stop Server: <a id="linkStop" href="/?stop" target="_blank"></a></div>
+  </div>
+  <script>
+    const sw = navigator.serviceWorker
+
+    btnOpenDir.onclick = async() => {
+      try {
+        var dirHandle = await showDirectoryPicker()
+      } catch {
+        return
+      }
+      if (location.search === '?stop') {
+        history.pushState(null, '', '/')
+      }
+      sw.controller.postMessage(dirHandle)
+    }
+
+    function showError(msg) {
+      txtErr.textContent = msg
+    }
+
+    async function main() {
+      if (!self.showDirectoryPicker) {
+        showError('File System Access API is not supported')
+        return
+      }
+      if (!sw) {
+        showError('Service Worker API is not supported')
+        return
+      }
+      if (!sw.controller) {
+        try {
+          await sw.register('sw.js')
+        } catch (err) {
+          showError(err.message)
+          return
+        }
+      }
+      sw.onmessage = (e) => {
+        if (e.data === 'GOT') {
+          location.reload()
+        }
+      }
+      btnOpenDir.disabled = false
+      divCmd.hidden = false
+      linkStop.textContent = linkStop.href
+    }
+    main()
+  </script>
+</body>
+</html>
