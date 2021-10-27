@@ -46,7 +46,7 @@ async function listDir(dirHandle, dirPath) {
     if (key.startsWith(DIR_PREFIX)) {
       icon = '📂'
       size = ''
-      name = key.substr(1) + '/'
+      name = key.substr(DIR_PREFIX.length) + '/'
     } else {
       icon = '📄'
       size = formatSize(sizeMap[key])
@@ -149,7 +149,7 @@ async function respond(url, req) {
     return Response.redirect('/')
   }
   const dirNames = unescape(url.pathname).replace(/^\/+/, '').split(/\/+/)
-  const fileName = dirNames.pop()
+  const fileName = dirNames.pop() || 'index.html'
   const dirHandles = [mRootDirHandle]
   let dirHandle = mRootDirHandle
   let dirPath = '/'
@@ -163,15 +163,15 @@ async function respond(url, req) {
     dirPath += `${dir}/`
   }
 
-  const handle = await getSubFileOrDir(dirHandle, fileName || 'index.html')
+  const handle = await getSubFileOrDir(dirHandle, fileName)
   if (!handle) {
     const res = await find404(dirHandles)
     if (res) {
       return res
     }
-    return fileName
-      ? make404()
-      : listDir(dirHandle, dirPath)
+    return fileName === 'index.html'
+      ? listDir(dirHandle, dirPath)
+      : make404()
   }
 
   if (handle.kind === 'directory') {
