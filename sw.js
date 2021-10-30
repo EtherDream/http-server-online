@@ -222,8 +222,7 @@ onfetch = (e) => {
 }
 
 onmessage = (e) => {
-  const path = new URL(e.source.url).pathname
-  if (path === '/' || path === '/index.html') {
+  if (mStopFlag) {
     mRootDirHandle = e.data
     mStopFlag = false
     e.source.postMessage('GOT')
