@@ -2,9 +2,13 @@
 
 Start a local HTTP server without any tools, just open a web page.
 
+![demo](demo.webp)
+
 ## Try It Online
 
 https://http-server.etherdream.com
+
+OR https://hs.etherdream.com
 
 https://user-images.githubusercontent.com/1072787/138898490-e4de9326-1715-415b-bbb6-3a377faaf618.mp4
 
