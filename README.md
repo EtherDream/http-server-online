@@ -2,7 +2,7 @@
 
 Start a local HTTP server without any tools, just open a web page.
 
-![demo](demo.webp)
+![demo](https://user-images.githubusercontent.com/1072787/139615219-c3b18f4d-a47c-4c89-b07e-7f8266badf4c.png)
 
 ## Try It Online
 
