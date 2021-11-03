@@ -148,6 +148,13 @@ async function respond(url, req) {
     mStopFlag = true
     return Response.redirect('/')
   }
+
+  if (await mRootDirHandle.queryPermission({mode: 'read'}) !== 'granted') {
+    console.log('[sw] permission expired')
+    mStopFlag = true
+    return Response.redirect('/')
+  }
+
   const dirNames = unescape(url.pathname).replace(/^\/+/, '').split(/\/+/)
   const fileName = dirNames.pop() || 'index.html'
   const dirHandles = [mRootDirHandle]
