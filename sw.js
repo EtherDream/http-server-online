@@ -15,10 +15,17 @@ function formatSize(n) {
   return n.toFixed(1) + 'kMGTP'[i - 1]
 }
 
+function escEntity(str, reg) {
+  return str.replace(reg, s => '&#' + s.charCodeAt(0) + ';')  
+}
+
 function escHtml(str) {
-  return str
-    .replace(/&|<|>/g, s => '&#' + s.charCodeAt(0) + ';')
+  return escEntity(str, /&|<|>/g)
     .replace(/\s/g, '&nbsp;')
+}
+
+function escAttr(str) {
+  return escEntity(str, /&|"/g)
 }
 
 async function listDir(dirHandle, dirPath) {
@@ -56,7 +63,7 @@ async function listDir(dirHandle, dirPath) {
     <tr>
       <td class="icon">${icon}</td>
       <td class="size">${size}</td>
-      <td class="name"><a href="${escape(name)}">${escHtml(name)}</a></td>
+      <td class="name"><a href="${escAttr(name)}">${escHtml(name)}</a></td>
     </tr>`
   })
 
@@ -155,7 +162,7 @@ async function respond(url, req) {
     return Response.redirect('/')
   }
 
-  const dirNames = unescape(url.pathname).replace(/^\/+/, '').split(/\/+/)
+  const dirNames = decodeURI(url.pathname).replace(/^\/+/, '').split(/\/+/)
   const fileName = dirNames.pop() || 'index.html'
   const dirHandles = [mRootDirHandle]
   let dirHandle = mRootDirHandle
@@ -191,7 +198,7 @@ async function respond(url, req) {
   /** @type {ResponseInit} */
   const resOpt = {
     headers: {
-      'content-type': file.type,
+      'content-type': file.type || 'text/plain',
     },
   }
 
